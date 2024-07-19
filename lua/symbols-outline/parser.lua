@@ -1,9 +1,9 @@
-local symbols = require 'symbols-outline.symbols'
-local ui = require 'symbols-outline.ui'
-local config = require 'symbols-outline.config'
-local t_utils = require 'symbols-outline.utils.table'
-local lsp_utils = require 'symbols-outline.utils.lsp_utils'
-local folding = require 'symbols-outline.folding'
+local symbols = require("symbols-outline.symbols")
+local ui = require("symbols-outline.ui")
+local config = require("symbols-outline.config")
+local t_utils = require("symbols-outline.utils.table")
+local lsp_utils = require("symbols-outline.utils.lsp_utils")
+local folding = require("symbols-outline.folding")
 
 local M = {}
 
@@ -39,7 +39,7 @@ local function parse_result(result, depth, hierarchy, parent)
         line = selectionRange.start.line,
         character = selectionRange.start.character,
         range_start = range.start.line,
-        range_end = range['end'].line,
+        range_end = range["end"].line,
         depth = level,
         isLast = isLast,
         hierarchy = hir,
@@ -99,7 +99,7 @@ function M.get_lines(flattened_outline_items)
     local depth = node.depth
     local marker_space = (config.options.fold_markers and 1) or 0
 
-    local line = t_utils.str_to_table(string.rep(' ', depth + marker_space))
+    local line = t_utils.str_to_table(string.rep(" ", depth + marker_space))
     local running_length = 1
 
     local function add_guide_hl(from, to)
@@ -107,7 +107,7 @@ function M.get_lines(flattened_outline_items)
         node_line,
         from,
         to,
-        'SymbolsOutlineConnector',
+        "SymbolsOutlineConnector",
       })
     end
 
@@ -116,7 +116,7 @@ function M.get_lines(flattened_outline_items)
       if config.options.show_guides then
         -- makes the guides
         if index == 1 then
-          line[index] = ' '
+          line[index] = " "
           -- i f index is last, add a bottom marker if current item is last,
           -- else add a middle marker
         elseif index == #line then
@@ -157,14 +157,14 @@ function M.get_lines(flattened_outline_items)
           add_guide_hl(
             running_length - 1 + 2 * marker_space,
             running_length
-              + vim.fn.strlen(ui.markers.vertical)
-              - 1
-              + 2 * marker_space
+            + vim.fn.strlen(ui.markers.vertical)
+            - 1
+            + 2 * marker_space
           )
         end
       end
 
-      line[index] = line[index] .. ' '
+      line[index] = line[index] .. " "
 
       running_length = running_length + vim.fn.strlen(line[index])
     end
@@ -173,12 +173,12 @@ function M.get_lines(flattened_outline_items)
 
     local string_prefix = t_utils.table_to_str(final_prefix)
 
-    table.insert(lines, string_prefix .. node.icon .. ' ' .. node.name)
+    table.insert(lines, string_prefix .. node.icon .. " " .. node.name)
 
     local hl_start = #string_prefix
     local hl_end = #string_prefix + #node.icon
     local hl_type = config.options.symbols[symbols.kinds[node.kind]].hl
-    table.insert(hl_info, { node_line, hl_start, hl_end, hl_type })
+    table.insert(hl_info, { node_line, hl_start, hl_end, hl_type, })
 
     node.prefix_length = #string_prefix + #node.icon + 1
   end
@@ -188,7 +188,7 @@ end
 function M.get_details(flattened_outline_items)
   local lines = {}
   for _, value in ipairs(flattened_outline_items) do
-    table.insert(lines, value.detail or '')
+    table.insert(lines, value.detail or "")
   end
   return lines
 end

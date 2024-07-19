@@ -1,11 +1,11 @@
-local config = require 'symbols-outline.config'
-local lsp_utils = require 'symbols-outline.utils.lsp_utils'
-local jsx = require 'symbols-outline.utils.jsx'
+local config = require("symbols-outline.config")
+local lsp_utils = require("symbols-outline.utils.lsp_utils")
+local jsx = require("symbols-outline.utils.jsx")
 
 local M = {}
 
 local function getParams()
-  return { textDocument = vim.lsp.util.make_text_document_params() }
+  return { textDocument = vim.lsp.util.make_text_document_params(), }
 end
 
 function M.hover_info(bufnr, params, on_info)
@@ -27,13 +27,13 @@ function M.hover_info(bufnr, params, on_info)
   if not used_client then
     on_info(nil, {
       contents = {
-        kind = 'markdown',
-        content = { 'No extra information availaible!' },
+        kind = "markdown",
+        content = { "No extra information availaible!", },
       },
     })
   end
 
-  used_client.request('textDocument/hover', params, on_info, bufnr)
+  used_client.request("textDocument/hover", params, on_info, bufnr)
 end
 
 -- probably change this
@@ -72,9 +72,9 @@ end
 function M.request_symbols(on_symbols)
   vim.lsp.buf_request_all(
     0,
-    'textDocument/documentSymbol',
+    "textDocument/documentSymbol",
     getParams(),
-    function (response)
+    function(response)
       on_symbols(M.postprocess_symbols(response))
     end
   )

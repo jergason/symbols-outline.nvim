@@ -4,16 +4,16 @@ local M = {}
 ---@param keys table|string
 ---@param action function|string
 function M.nmap(bufnr, keys, action)
-  if type(keys) == 'string' then
-    keys = { keys }
+  if type(keys) == "string" then
+    keys = { keys, }
   end
 
   for _, lhs in ipairs(keys) do
     vim.keymap.set(
-      'n',
+      "n",
       lhs,
       action,
-      { silent = true, noremap = true, buffer = bufnr }
+      { silent = true, noremap = true, buffer = bufnr, }
     )
   end
 end
@@ -25,7 +25,7 @@ function M.debounce(f, delay)
   local timer = vim.loop.new_timer()
 
   return function(...)
-    local args = { ... }
+    local args = { ..., }
 
     timer:start(
       delay,
@@ -63,21 +63,21 @@ M.merge_items_rec = function(new_node, old_node, index, parent)
   else
     for key, _ in pairs(new_node) do
       if
-        vim.tbl_contains({
-          'parent',
-          'children',
-          'folded',
-          'hovered',
-          'line_in_outline',
-          'hierarchy',
-        }, key)
+          vim.tbl_contains({
+            "parent",
+            "children",
+            "folded",
+            "hovered",
+            "line_in_outline",
+            "hierarchy",
+          }, key)
       then
         goto continue
       end
 
-      if key == 'name' then
+      if key == "name" then
         -- in the case of a rename, just rename the existing node
-        old_node['name'] = new_node['name']
+        old_node["name"] = new_node["name"]
       else
         if not vim.deep_equal(new_node[key], old_node[key]) then
           failed = true

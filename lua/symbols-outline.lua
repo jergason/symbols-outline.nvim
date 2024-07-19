@@ -1,20 +1,20 @@
-local parser = require 'symbols-outline.parser'
-local providers = require 'symbols-outline.providers.init'
-local ui = require 'symbols-outline.ui'
-local writer = require 'symbols-outline.writer'
-local config = require 'symbols-outline.config'
-local utils = require 'symbols-outline.utils.init'
-local View = require 'symbols-outline.view'
-local folding = require 'symbols-outline.folding'
+local parser = require("symbols-outline.parser")
+local providers = require("symbols-outline.providers.init")
+local ui = require("symbols-outline.ui")
+local writer = require("symbols-outline.writer")
+local config = require("symbols-outline.config")
+local utils = require("symbols-outline.utils.init")
+local View = require("symbols-outline.view")
+local folding = require("symbols-outline.folding")
 
 local M = {}
 
 local function setup_global_autocmd()
   if
-    config.options.highlight_hovered_item or config.options.auto_unfold_hover
+      config.options.highlight_hovered_item or config.options.auto_unfold_hover
   then
-    vim.api.nvim_create_autocmd('CursorHold', {
-      pattern = '*',
+    vim.api.nvim_create_autocmd("CursorHold", {
+      pattern = "*",
       callback = function()
         M._highlight_current_item(nil)
       end,
@@ -22,33 +22,33 @@ local function setup_global_autocmd()
   end
 
   vim.api.nvim_create_autocmd({
-    'InsertLeave',
-    'WinEnter',
-    'BufEnter',
-    'BufWinEnter',
-    'TabEnter',
-    'BufWritePost',
+    "InsertLeave",
+    "WinEnter",
+    "BufEnter",
+    "BufWinEnter",
+    "TabEnter",
+    "BufWritePost",
   }, {
-    pattern = '*',
+    pattern = "*",
     callback = M._refresh,
   })
 
-  vim.api.nvim_create_autocmd('WinEnter', {
-    pattern = '*',
-    callback = require('symbols-outline.preview').close,
+  vim.api.nvim_create_autocmd("WinEnter", {
+    pattern = "*",
+    callback = require("symbols-outline.preview").close,
   })
 end
 
 local function setup_buffer_autocmd()
   if config.options.auto_preview then
-    vim.api.nvim_create_autocmd('CursorHold', {
+    vim.api.nvim_create_autocmd("CursorHold", {
       buffer = 0,
-      callback = require('symbols-outline.preview').show,
+      callback = require("symbols-outline.preview").show,
     })
   else
-    vim.api.nvim_create_autocmd('CursorMoved', {
+    vim.api.nvim_create_autocmd("CursorMoved", {
       buffer = 0,
-      callback = require('symbols-outline.preview').close,
+      callback = require("symbols-outline.preview").close,
     })
   end
 end
@@ -63,7 +63,7 @@ M.state = {
 }
 
 local function wipe_state()
-  M.state = { outline_items = {}, flattened_outline_items = {}, code_win = 0 }
+  M.state = { outline_items = {}, flattened_outline_items = {}, code_win = 0, }
 end
 
 local function _update_lines()
@@ -73,15 +73,15 @@ end
 
 local function _merge_items(items)
   utils.merge_items_rec(
-    { children = items },
-    { children = M.state.outline_items }
+    { children = items, },
+    { children = M.state.outline_items, }
   )
 end
 
 local function __refresh()
   if M.view:is_open() then
     local function refresh_handler(response)
-      if response == nil or type(response) ~= 'table' then
+      if response == nil or type(response) ~= "table" then
         return
       end
 
@@ -108,7 +108,7 @@ local function goto_location(change_focus)
   local node = M._current_node()
   vim.api.nvim_win_set_cursor(
     M.state.code_win,
-    { node.line + 1, node.character }
+    { node.line + 1, node.character, }
   )
   if change_focus then
     vim.fn.win_gotoid(M.state.code_win)
@@ -126,13 +126,13 @@ function M._set_folded(folded, move_cursor, node_index)
     node.folded = folded
 
     if move_cursor then
-      vim.api.nvim_win_set_cursor(M.view.winnr, { node_index, 0 })
+      vim.api.nvim_win_set_cursor(M.view.winnr, { node_index, 0, })
     end
 
     _update_lines()
   elseif node.parent then
     local parent_node =
-      M.state.flattened_outline_items[node.parent.line_in_outline]
+        M.state.flattened_outline_items[node.parent.line_in_outline]
 
     if parent_node then
       M._set_folded(
@@ -161,13 +161,13 @@ function M._highlight_current_item(winnr)
   local has_provider = providers.has_provider()
 
   local is_current_buffer_the_outline = M.view.bufnr
-    == vim.api.nvim_get_current_buf()
+      == vim.api.nvim_get_current_buf()
 
   local doesnt_have_outline_buf = not M.view.bufnr
 
   local should_exit = not has_provider
-    or doesnt_have_outline_buf
-    or is_current_buffer_the_outline
+      or doesnt_have_outline_buf
+      or is_current_buffer_the_outline
 
   -- Make a special case if we have a window number
   -- Because we might use this to manually focus so we dont want to quit this
@@ -190,8 +190,8 @@ function M._highlight_current_item(winnr)
     value.hovered = nil
 
     if
-      value.line == hovered_line
-      or (hovered_line > value.range_start and hovered_line < value.range_end)
+        value.line == hovered_line
+        or (hovered_line > value.range_start and hovered_line < value.range_end)
     then
       value.hovered = true
       leaf_node = value
@@ -205,7 +205,7 @@ function M._highlight_current_item(winnr)
   if leaf_node then
     for index, node in ipairs(M.state.flattened_outline_items) do
       if node == leaf_node then
-        vim.api.nvim_win_set_cursor(M.view.winnr, { index, 1 })
+        vim.api.nvim_win_set_cursor(M.view.winnr, { index, 1, })
         break
       end
     end
@@ -227,27 +227,27 @@ local function setup_keymaps(bufnr)
   -- hover symbol
   map(
     config.options.keymaps.hover_symbol,
-    require('symbols-outline.hover').show_hover
+    require("symbols-outline.hover").show_hover
   )
   -- preview symbol
   map(
     config.options.keymaps.toggle_preview,
-    require('symbols-outline.preview').toggle
+    require("symbols-outline.preview").toggle
   )
   -- rename symbol
   map(
     config.options.keymaps.rename_symbol,
-    require('symbols-outline.rename').rename
+    require("symbols-outline.rename").rename
   )
   -- code actions
   map(
     config.options.keymaps.code_actions,
-    require('symbols-outline.code_action').show_code_actions
+    require("symbols-outline.code_action").show_code_actions
   )
   -- show help
   map(
     config.options.keymaps.show_help,
-    require('symbols-outline.config').show_help
+    require("symbols-outline.config").show_help
   )
   -- close outline
   map(config.options.keymaps.close, function()
@@ -276,7 +276,7 @@ local function setup_keymaps(bufnr)
 end
 
 local function handler(response)
-  if response == nil or type(response) ~= 'table' then
+  if response == nil or type(response) ~= "table" then
     return
   end
 

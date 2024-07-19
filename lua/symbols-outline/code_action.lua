@@ -1,19 +1,17 @@
-local vim = vim
-
-local main = require 'symbols-outline'
+local main = require("symbols-outline")
 
 local M = {}
 
 local function get_action_params(node, winnr)
   local bufnr = vim.api.nvim_win_get_buf(winnr)
-  local fn = 'file://' .. vim.api.nvim_buf_get_name(bufnr)
+  local fn = "file://" .. vim.api.nvim_buf_get_name(bufnr)
 
-  local pos = { line = node.line, character = node.character }
+  local pos = { line = node.line, character = node.character, }
   local diagnostics = vim.lsp.diagnostic.get_line_diagnostics(bufnr, node.line)
   return {
-    textDocument = { uri = fn },
-    range = { start = pos, ['end'] = pos },
-    context = { diagnostics = diagnostics },
+    textDocument = { uri = fn, },
+    range = { start = pos, ["end"] = pos, },
+    context = { diagnostics = diagnostics, },
     bufnr = bufnr,
   }
 end
@@ -25,9 +23,9 @@ function M.show_code_actions()
   local params = get_action_params(node, main.state.code_win)
   vim.lsp.buf_request(
     params.bufnr,
-    'textDocument/codeAction',
+    "textDocument/codeAction",
     params,
-    vim.lsp.handlers['textDocument/codeAction']
+    vim.lsp.handlers["textDocument/codeAction"]
   )
 end
 

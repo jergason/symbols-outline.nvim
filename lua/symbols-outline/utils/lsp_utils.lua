@@ -1,5 +1,5 @@
-local config = require 'symbols-outline.config'
-local tbl_utils = require 'symbols-outline.utils.table'
+local config = require("symbols-outline.config")
+local tbl_utils = require("symbols-outline.utils.table")
 
 local M = {}
 
@@ -9,22 +9,22 @@ function M.is_buf_attached_to_lsp(bufnr)
 end
 
 function M.is_buf_markdown(bufnr)
-  return vim.api.nvim_buf_get_option(bufnr, 'ft') == 'markdown'
+  return vim.api.nvim_buf_get_option(bufnr, "ft") == "markdown"
 end
 
 --- Merge all client token lists in an LSP response
 function M.flatten_response(response)
   local all_results = {}
 
-    -- flatten results to one giant table of symbols
+  -- flatten results to one giant table of symbols
   for client_id, client_response in pairs(response) do
     if config.is_client_blacklisted(client_id) then
-      print('skipping client ' .. client_id)
+      print("skipping client " .. client_id)
       goto continue
     end
 
-    local result = client_response['result']
-    if result == nil or type(result) ~= 'table' then
+    local result = client_response["result"]
+    if result == nil or type(result) ~= "table" then
       goto continue
     end
 
@@ -51,8 +51,8 @@ end
 function M.get_range(token)
   if token == nil then
     return {
-      start={ line=math.huge, character=math.huge },
-      ['end']={ line=-math.huge, character=-math.huge },
+      start = { line = math.huge, character = math.huge, },
+      ["end"] = { line = -math.huge, character = -math.huge, },
     }
   end
 
@@ -131,15 +131,15 @@ function M.symbol_preorder_iter(symbols)
     return stk[#stk]
   end
 
-  return { next=next, is_empty=is_empty, peek=peek }
+  return { next = next, is_empty = is_empty, peek = peek, }
 end
 
 local function merge_symbols_rec(iter1, iter2, ub)
   local res = {}
 
   while not (iter1.is_empty() and iter2.is_empty()) do
-    local bv1 = ((not iter1.is_empty()) and M.get_range(iter1.peek()).start) or { line=math.huge, character=math.huge }
-    local bv2 = ((not iter2.is_empty()) and M.get_range(iter2.peek()).start) or { line=math.huge, character=math.huge }
+    local bv1 = ((not iter1.is_empty()) and M.get_range(iter1.peek()).start) or { line = math.huge, character = math.huge, }
+    local bv2 = ((not iter2.is_empty()) and M.get_range(iter2.peek()).start) or { line = math.huge, character = math.huge, }
 
     local iter = (range_compare(bv1, bv2) and iter1) or iter2
 
@@ -149,7 +149,7 @@ local function merge_symbols_rec(iter1, iter2, ub)
 
     local node = iter.next()
 
-    node.new_children = merge_symbols_rec(iter1, iter2, M.get_range(node)['end'])
+    node.new_children = merge_symbols_rec(iter1, iter2, M.get_range(node)["end"])
 
     table.insert(res, node)
   end

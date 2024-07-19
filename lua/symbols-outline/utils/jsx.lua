@@ -4,9 +4,9 @@ local SYMBOL_COMPONENT = 27
 local SYMBOL_FRAGMENT = 28
 
 local function get_open_tag(node)
-  if node:type() == 'jsx_element' then
-    for _, outer in ipairs(node:field 'open_tag') do
-      if outer:type() == 'jsx_opening_element' then
+  if node:type() == "jsx_element" then
+    for _, outer in ipairs(node:field "open_tag") do
+      if outer:type() == "jsx_opening_element" then
         return outer
       end
     end
@@ -18,21 +18,21 @@ end
 local function jsx_node_detail(node, buf)
   node = get_open_tag(node) or node
 
-  local param_nodes = node:field 'attribute'
+  local param_nodes = node:field "attribute"
   if #param_nodes == 0 then
     return nil
   end
 
-  local res = '{ '
-    .. table.concat(
-      vim.tbl_map(function(el)
-        local a, b, c, d = el:range()
-        local text = vim.api.nvim_buf_get_text(buf, a, b, c, d, {})
-        return text[1]
-      end, param_nodes),
-      ' '
-    )
-    .. ' }'
+  local res = "{ "
+      .. table.concat(
+        vim.tbl_map(function(el)
+          local a, b, c, d = el:range()
+          local text = vim.api.nvim_buf_get_text(buf, a, b, c, d, {})
+          return text[1]
+        end, param_nodes),
+        " "
+      )
+      .. " }"
 
   return res
 end
@@ -42,8 +42,8 @@ local function jsx_node_tagname(node, buf)
 
   local identifier = nil
 
-  for _, val in ipairs(tagnode:field 'name') do
-    if val:type() == 'identifier' then
+  for _, val in ipairs(tagnode:field "name") do
+    if val:type() == "identifier" then
       identifier = val
     end
   end
@@ -57,17 +57,17 @@ local function jsx_node_tagname(node, buf)
 end
 
 local function convert_ts(child, children, bufnr)
-  local is_frag = (child:type() == 'jsx_fragment')
+  local is_frag = (child:type() == "jsx_fragment")
 
   local a, b, c, d = child:range()
   local range = {
-    start = { line = a, character = b },
-    ['end'] = { line = c, character = d },
+    start = { line = a, character = b, },
+    ["end"] = { line = c, character = d, },
   }
 
   local converted = {
-    name = (not is_frag and (jsx_node_tagname(child, bufnr) or '<unknown>'))
-      or 'fragment',
+    name = (not is_frag and (jsx_node_tagname(child, bufnr) or "<unknown>"))
+        or "fragment",
     children = (#children > 0 and children) or nil,
     kind = (is_frag and SYMBOL_FRAGMENT) or SYMBOL_COMPONENT,
     detail = jsx_node_detail(child, bufnr),
@@ -83,10 +83,10 @@ function M.parse_ts(root, children, bufnr)
 
   for child in root:iter_children() do
     if
-      vim.tbl_contains(
-        { 'jsx_element', 'jsx_self_closing_element' },
-        child:type()
-      )
+        vim.tbl_contains(
+          { "jsx_element", "jsx_self_closing_element", },
+          child:type()
+        )
     then
       local new_children = {}
 
@@ -102,7 +102,7 @@ function M.parse_ts(root, children, bufnr)
 end
 
 function M.get_symbols()
-  local status, parsers = pcall(require, 'nvim-treesitter.parsers')
+  local status, parsers = pcall(require, "nvim-treesitter.parsers")
 
   if not status then
     return {}
