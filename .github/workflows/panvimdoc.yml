@@ -20,6 +20,9 @@ jobs:
         uses: kdheepak/panvimdoc@v4
         with:
           vimdoc: symbols-outline
+          version: "NVIM v0.10.0"
+          toc: true
+          treesitter: true
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto generate docs"
