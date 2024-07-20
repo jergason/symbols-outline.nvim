@@ -5,12 +5,12 @@ Table of Contents                          *symbols-outline-table-of-contents*
 
 1. symbols-outline.nvim                 |symbols-outline-symbols-outline.nvim|
   - Prerequisites         |symbols-outline-symbols-outline.nvim-prerequisites|
-  - Installation           |symbols-outline-symbols-outline.nvim-installation|
-  - Setup                         |symbols-outline-symbols-outline.nvim-setup|
+  - Installation and Setup|symbols-outline-symbols-outline.nvim-installation-and-setup|
   - Configuration         |symbols-outline-symbols-outline.nvim-configuration|
   - Commands                   |symbols-outline-symbols-outline.nvim-commands|
   - Default keymaps     |symbols-outline-symbols-outline.nvim-default-keymaps|
   - Highlights               |symbols-outline-symbols-outline.nvim-highlights|
+  - Roadmap                     |symbols-outline-symbols-outline.nvim-roadmap|
 2. Links                                               |symbols-outline-links|
 
 ==============================================================================
@@ -19,37 +19,43 @@ Table of Contents                          *symbols-outline-table-of-contents*
 **A tree like view for symbols in Neovim using the Language Server Protocol.
 Supports all your favourite languages.**
 
+Demo was taken from rust-tools-demos
+<https://github.com/simrat39/rust-tools-demos/raw/master/symbols-demo.gif>
+
 
 PREREQUISITES             *symbols-outline-symbols-outline.nvim-prerequisites*
 
-- `neovim 0.7+`
+- `neovim 0.10+`
 - Properly configured Neovim LSP client
 
 
-INSTALLATION               *symbols-outline-symbols-outline.nvim-installation*
+INSTALLATION AND SETUP*symbols-outline-symbols-outline.nvim-installation-and-setup*
 
-Using `packer.nvim`
-
->lua
-    use 'simrat39/symbols-outline.nvim'
-<
-
-
-SETUP                             *symbols-outline-symbols-outline.nvim-setup*
-
-Put the setup call in your init.lua or any lua file that is sourced.
+Using `lazy.nvim`
 
 >lua
-    require("symbols-outline").setup()
+    {
+      "vaengir/symbols-outline.nvim",
+      cmd = { "SymbolsOutline", "SymbolsOutlineOpen", "SymbolsOutlineClose" },
+      opts = {
+        -- your configuration goes here
+        -- or leave it empty to use the default settings
+        -- refer to the configuration section below
+      },
+      keys = {
+        { "<leader>st", "<cmd>SymbolsOutline<cr>", desc = "Toggle Symbol Sidebar", },
+      },
+    }
 <
 
 
 CONFIGURATION             *symbols-outline-symbols-outline.nvim-configuration*
 
-Pass a table to the setup call above with your configuration options.
+These options can be put in the opts table of the
+|symbols-outline-installation-section|.
 
 >lua
-    local opts = {
+    opts = {
       highlight_hovered_item = true,
       show_guides = true,
       auto_preview = false,
@@ -66,15 +72,15 @@ Pass a table to the setup call above with your configuration options.
       fold_markers = { '', '' },
       wrap = false,
       keymaps = { -- These keymaps can be a string or a table for multiple keys
-        close = {"<Esc>", "q"},
-        goto_location = "<Cr>",
+        close = {"q"},
+        goto_location = "<cr>",
         focus_location = "o",
         hover_symbol = "<C-space>",
         toggle_preview = "K",
         rename_symbol = "r",
         code_actions = "a",
-        fold = "h",
-        unfold = "l",
+        fold = "H",
+        unfold = "L",
         fold_all = "W",
         unfold_all = "E",
         fold_reset = "R",
@@ -82,34 +88,34 @@ Pass a table to the setup call above with your configuration options.
       lsp_blacklist = {},
       symbol_blacklist = {},
       symbols = {
-        File = { icon = "", hl = "@text.uri" },
-        Module = { icon = "", hl = "@namespace" },
-        Namespace = { icon = "", hl = "@namespace" },
-        Package = { icon = "", hl = "@namespace" },
-        Class = { icon = "𝓒", hl = "@type" },
-        Method = { icon = "ƒ", hl = "@method" },
-        Property = { icon = "", hl = "@method" },
-        Field = { icon = "", hl = "@field" },
-        Constructor = { icon = "", hl = "@constructor" },
-        Enum = { icon = "ℰ", hl = "@type" },
-        Interface = { icon = "ﰮ", hl = "@type" },
-        Function = { icon = "", hl = "@function" },
-        Variable = { icon = "", hl = "@constant" },
-        Constant = { icon = "", hl = "@constant" },
-        String = { icon = "𝓐", hl = "@string" },
-        Number = { icon = "#", hl = "@number" },
-        Boolean = { icon = "⊨", hl = "@boolean" },
-        Array = { icon = "", hl = "@constant" },
-        Object = { icon = "⦿", hl = "@type" },
-        Key = { icon = "🔐", hl = "@type" },
-        Null = { icon = "NULL", hl = "@type" },
-        EnumMember = { icon = "", hl = "@field" },
-        Struct = { icon = "𝓢", hl = "@type" },
-        Event = { icon = "🗲", hl = "@type" },
-        Operator = { icon = "+", hl = "@operator" },
-        TypeParameter = { icon = "𝙏", hl = "@parameter" },
-        Component = { icon = "", hl = "@function" },
-        Fragment = { icon = "", hl = "@constant" },
+        File = { icon = "", hl = "@text.uri", },
+        Module = { icon = "", hl = "@namespace", },
+        Namespace = { icon = "", hl = "@namespace", },
+        Package = { icon = "", hl = "@namespace", },
+        Class = { icon = "𝓒", hl = "@type", },
+        Method = { icon = "ƒ", hl = "@method", },
+        Property = { icon = "", hl = "@method", },
+        Field = { icon = "", hl = "@field", },
+        Constructor = { icon = "", hl = "@constructor", },
+        Enum = { icon = "ℰ", hl = "@type", },
+        Interface = { icon = "ﰮ", hl = "@type", },
+        Function = { icon = "", hl = "@function", },
+        Variable = { icon = "", hl = "@constant", },
+        Constant = { icon = "", hl = "@constant", },
+        String = { icon = "𝓐", hl = "@string", },
+        Number = { icon = "#", hl = "@number", },
+        Boolean = { icon = "⊨", hl = "@boolean", },
+        Array = { icon = "", hl = "@constant", },
+        Object = { icon = "⦿", hl = "@type", },
+        Key = { icon = "", hl = "@type", },
+        Null = { icon = "NULL", hl = "@type", },
+        EnumMember = { icon = "", hl = "@field", },
+        Struct = { icon = "𝓢", hl = "@type", },
+        Event = { icon = "", hl = "@type", },
+        Operator = { icon = "+", hl = "@operator", },
+        TypeParameter = { icon = "𝙏", hl = "@parameter", },
+        Component = { icon = "", hl = "@function", },
+        Fragment = { icon = "", hl = "@constant", },
       },
     }
 <
@@ -183,15 +189,15 @@ DEFAULT KEYMAPS         *symbols-outline-symbols-outline.nvim-default-keymaps*
 
   Key          Action
   ------------ ----------------------------------------------------
-  Escape       Close outline
+  q            Close outline
   Enter        Go to symbol location in code
   o            Go to symbol location in code without losing focus
   Ctrl+Space   Hover current symbol
   K            Toggles the current symbol preview
   r            Rename symbol
   a            Code actions
-  h            fold symbol
-  l            Unfold symbol
+  H            fold symbol
+  L            Unfold symbol
   W            Fold all symbols
   E            Unfold all symbols
   R            Reset all folding
@@ -205,10 +211,16 @@ HIGHLIGHTS                   *symbols-outline-symbols-outline.nvim-highlights*
   Pmenu                     Highlight of the preview popup windows
   SymbolsOutlineConnector   Highlight of the table connectors
   Comment                   Highlight of the info virtual text
+
+ROADMAP                         *symbols-outline-symbols-outline.nvim-roadmap*
+
+- ☐ Add config option to not focus window on opening
+- ☐ Prevent errors when not closing window properly
+
 ==============================================================================
 2. Links                                               *symbols-outline-links*
 
-1. *demo*: https://github.com/simrat39/rust-tools-demos/raw/master/symbols-demo.gif
+1. *demo*: ./symbols-demo.gif
 
 Generated by panvimdoc <https://github.com/kdheepak/panvimdoc>
 
