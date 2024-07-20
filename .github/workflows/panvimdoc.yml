@@ -1,7 +1,7 @@
 name: panvimdoc
 
 on:
-  push:
+  pull_request:
     branches: [main]
     paths:
       - README.md
