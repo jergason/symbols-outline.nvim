@@ -59,7 +59,7 @@ M.defaults = {
     Null = { icon = "NULL", hl = "@type", },
     EnumMember = { icon = "", hl = "@field", },
     Struct = { icon = "𝓢", hl = "@type", },
-    Event = { icon = "🗲", hl = "@type", },
+    Event = { icon = "", hl = "@type", },
     Operator = { icon = "+", hl = "@operator", },
     TypeParameter = { icon = "𝙏", hl = "@parameter", },
     Component = { icon = "", hl = "@function", },
