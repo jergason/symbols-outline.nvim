@@ -41,7 +41,7 @@ function M.show_hover()
         end
       end
       if vim.tbl_isempty(lines) then
-        -- return { 'No information available' }
+        -- return { "No information available", }
         return
       end
       return util.open_floating_preview(lines, "markdown", config)

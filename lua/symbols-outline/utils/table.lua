@@ -31,7 +31,6 @@ end
 --- Deep copy a table, deeply excluding certain keys
 function M.deepcopy_excluding(t, keys)
   local res = {}
-
   for key, value in pairs(t) do
     if not vim.tbl_contains(keys, key) then
       if type(value) == "table" then
@@ -41,7 +40,6 @@ function M.deepcopy_excluding(t, keys)
       end
     end
   end
-
   return res
 end
 

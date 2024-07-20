@@ -19,16 +19,16 @@ M.defaults = {
   fold_markers = { "", "", },
   wrap = false,
   keymaps = { -- These keymaps can be a string or a table for multiple keys
-    close = { "<Esc>", "q", },
-    goto_location = "<Cr>",
+    close = { "q", },
+    goto_location = "<cr>",
     focus_location = "o",
     hover_symbol = "<C-space>",
     toggle_preview = "K",
     rename_symbol = "r",
     code_actions = "a",
     show_help = "?",
-    fold = "h",
-    unfold = "l",
+    fold = "H",
+    unfold = "L",
     fold_all = "W",
     unfold_all = "E",
     fold_reset = "R",
@@ -55,7 +55,7 @@ M.defaults = {
     Boolean = { icon = "⊨", hl = "@boolean", },
     Array = { icon = "", hl = "@constant", },
     Object = { icon = "⦿", hl = "@type", },
-    Key = { icon = "🔐", hl = "@type", },
+    Key = { icon = "", hl = "@type", },
     Null = { icon = "NULL", hl = "@type", },
     EnumMember = { icon = "", hl = "@field", },
     Struct = { icon = "𝓢", hl = "@type", },
@@ -103,7 +103,6 @@ local function has_value(tab, val)
       return true
     end
   end
-
   return false
 end
 
@@ -123,8 +122,8 @@ function M.is_client_blacklisted(client_id)
 end
 
 function M.show_help()
-  print "Current keymaps:"
-  print(vim.inspect(M.options.keymaps))
+  vim.notify("Current keymaps:")
+  vim.notify(vim.inspect(M.options.keymaps))
 end
 
 function M.setup(options)

@@ -4,7 +4,7 @@ local M = {}
 
 -- probably change this
 function M.should_use_provider(bufnr)
-  return string.match(vim.api.nvim_buf_get_option(bufnr, "ft"), "markdown")
+  return string.match(vim.api.nvim_get_option_value("ft", { buf = bufnr, }), "markdown")
 end
 
 function M.hover_info(_, _, on_info)

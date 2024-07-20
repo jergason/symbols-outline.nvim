@@ -3,14 +3,11 @@ local M = {}
 function M.should_use_provider(_)
     local not_coc_installed = vim.fn.exists "*CocActionAsync" == 0
     local not_coc_service_initialized = vim.g.coc_service_initialized == 0
-
     if not_coc_installed or not_coc_service_initialized then
         return
     end
-
     local coc_attached = vim.fn.call("CocAction", { "ensureDocument", })
     local has_symbols = vim.fn.call("CocHasProvider", { "documentSymbol", })
-
     return coc_attached and has_symbols
 end
 

@@ -10,9 +10,7 @@ local folding = require("symbols-outline.folding")
 local M = {}
 
 local function setup_global_autocmd()
-  if
-      config.options.highlight_hovered_item or config.options.auto_unfold_hover
-  then
+  if config.options.highlight_hovered_item or config.options.auto_unfold_hover then
     vim.api.nvim_create_autocmd("CursorHold", {
       pattern = "*",
       callback = function()
@@ -20,7 +18,6 @@ local function setup_global_autocmd()
       end,
     })
   end
-
   vim.api.nvim_create_autocmd({
     "InsertLeave",
     "WinEnter",
@@ -32,7 +29,6 @@ local function setup_global_autocmd()
     pattern = "*",
     callback = M._refresh,
   })
-
   vim.api.nvim_create_autocmd("WinEnter", {
     pattern = "*",
     callback = require("symbols-outline.preview").close,
@@ -84,15 +80,11 @@ local function __refresh()
       if response == nil or type(response) ~= "table" then
         return
       end
-
       local items = parser.parse(response)
       _merge_items(items)
-
       M.state.code_win = vim.api.nvim_get_current_win()
-
       _update_lines()
     end
-
     providers.request_symbols(refresh_handler)
   end
 end
@@ -121,19 +113,15 @@ end
 function M._set_folded(folded, move_cursor, node_index)
   local node = M.state.flattened_outline_items[node_index] or M._current_node()
   local changed = (folded ~= folding.is_folded(node))
-
   if folding.is_foldable(node) and changed then
     node.folded = folded
-
     if move_cursor then
       vim.api.nvim_win_set_cursor(M.view.winnr, { node_index, 0, })
     end
-
     _update_lines()
   elseif node.parent then
     local parent_node =
         M.state.flattened_outline_items[node.parent.line_in_outline]
-
     if parent_node then
       M._set_folded(
         folded,
@@ -146,49 +134,37 @@ end
 
 function M._set_all_folded(folded, nodes)
   nodes = nodes or M.state.outline_items
-
   for _, node in ipairs(nodes) do
     node.folded = folded
     if node.children then
       M._set_all_folded(folded, node.children)
     end
   end
-
   _update_lines()
 end
 
 function M._highlight_current_item(winnr)
   local has_provider = providers.has_provider()
-
   local is_current_buffer_the_outline = M.view.bufnr
       == vim.api.nvim_get_current_buf()
-
   local doesnt_have_outline_buf = not M.view.bufnr
-
   local should_exit = not has_provider
       or doesnt_have_outline_buf
       or is_current_buffer_the_outline
-
   -- Make a special case if we have a window number
   -- Because we might use this to manually focus so we dont want to quit this
   -- function
   if winnr then
     should_exit = false
   end
-
   if should_exit then
     return
   end
-
   local win = winnr or vim.api.nvim_get_current_win()
-
   local hovered_line = vim.api.nvim_win_get_cursor(win)[1] - 1
-
   local leaf_node = nil
-
   local cb = function(value)
     value.hovered = nil
-
     if
         value.line == hovered_line
         or (hovered_line > value.range_start and hovered_line < value.range_end)
@@ -197,11 +173,8 @@ function M._highlight_current_item(winnr)
       leaf_node = value
     end
   end
-
   utils.items_dfs(cb, M.state.outline_items)
-
   _update_lines()
-
   if leaf_node then
     for index, node in ipairs(M.state.flattened_outline_items) do
       if node == leaf_node then
@@ -279,9 +252,7 @@ local function handler(response)
   if response == nil or type(response) ~= "table" then
     return
   end
-
   M.state.code_win = vim.api.nvim_get_current_win()
-
   M.view:setup_view()
   -- clear state when buffer is closed
   vim.api.nvim_buf_attach(M.view.bufnr, false, {
@@ -289,17 +260,12 @@ local function handler(response)
       wipe_state()
     end,
   })
-
   setup_keymaps(M.view.bufnr)
   setup_buffer_autocmd()
-
   local items = parser.parse(response)
-
   M.state.outline_items = items
   M.state.flattened_outline_items = parser.flatten(items)
-
   writer.parse_and_write(M.view.bufnr, M.state.flattened_outline_items)
-
   M._highlight_current_item(M.state.code_win)
 end
 
@@ -324,7 +290,6 @@ end
 function M.setup(opts)
   config.setup(opts)
   ui.setup_highlights()
-
   M.view = View:new()
   setup_global_autocmd()
 end
