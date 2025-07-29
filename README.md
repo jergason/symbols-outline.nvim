@@ -17,7 +17,7 @@ Using `lazy.nvim`
 
 ```lua
 {
-  "vaengir/symbols-outline.nvim",
+  "jergason/symbols-outline.nvim",
   cmd = { "SymbolsOutline", "SymbolsOutlineOpen", "SymbolsOutlineClose" },
   opts = {
     -- your configuration goes here
